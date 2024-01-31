@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Babylon.js Meshes with Mathematical Functions and Light Gizmo</title>
+    <style>
+        html, body { overflow: hidden; width: 100%; height: 100%; margin: 0; padding: 0; }
+        #renderCanvas { width: 100%; height: 100%; display: block; }
+    </style>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <!-- Include the gizmos library -->
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+<!-- Include the Babylon.js loaders library -->
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<!-- Include the Babylon.js materials library -->
+<script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById('renderCanvas');
+        var engine = new BABYLON.Engine(canvas, true);
+
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color4(0.75, 0.75, 0.75, 1);
+
+            var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 15, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+            var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), scene);
+            light.position = new BABYLON.Vector3(20, 40, 20);
+            light.intensity = 0.7;
+
+
+            // Light direction helper dummy mesh
+            var lightHelper = BABYLON.MeshBuilder.CreateBox("lightHelper", { size: 1 }, scene);
+            lightHelper.position = light.position.clone(); // Position it at the light source, if it has a position
+            lightHelper.visibility = 0; // make the helper invisible
+
+            // Create gizmo
+            var gizmoManager = new BABYLON.GizmoManager(scene);
+            gizmoManager.attachableMeshes = [lightHelper];
+
+            // Create a rotation gizmo
+            var rotationGizmo = new BABYLON.RotationGizmo(gizmoManager.gizmoLayer);
+            rotationGizmo.attachedMesh = lightHelper;
+            rotationGizmo.updateGizmoRotationToMatchAttachedMesh = false;
+            rotationGizmo.snapDistance = Math.PI / 4; // Optional: Configure rotation snapping
+
+            // Update light direction when the helper mesh is rotated
+            lightHelper.rotationQuaternion = new BABYLON.Quaternion();
+            lightHelper.addRotation(0, Math.PI/4, 0); // Initialize to match your light's current direction
+            scene.onBeforeRenderObservable.add(() => {
+                var forward = new BABYLON.Vector3(0,0,1);
+                forward = BABYLON.Vector3.TransformNormal(forward, lightHelper.getWorldMatrix());
+                light.direction = BABYLON.Vector3.Normalize(forward);
+            });
+
+
+
+
+            // Light Gizmo to visualize the light direction
+            var gizmoManager = new BABYLON.GizmoManager(scene);
+            gizmoManager.attachToNode(light);
+            gizmoManager.usePointerToAttachGizmos = false; // Disable pointer interaction for simplicity
+
+            var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+            shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.blurKernel = 32;
+
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 100, height: 100}, scene);
+            var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+            groundMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.6, 0.9);
+            ground.material = groundMaterial;
+            ground.receiveShadows = true;
+
+            // Function to create a custom mesh based on a mathematical function
+            function createMathematicalMesh(name, equation, scene) {
+
+                
+                var data = [];
+                var size = 50; // Define the size of the mesh
+                var step = 1; // Define the distance between each point
+
+                // Generate vertices based on the equation
+                for (var x = -size; x <= size; x += step) {
+                    for (var z = -size; z <= size; z += step) {
+                        var y = equation(x, z); // Use the provided equation
+                        data.push(x, y, z);
+                    }
+                }
+
+                // Create the custom mesh
+                var customMesh = new BABYLON.Mesh(name, scene);
+                var vertexData = new BABYLON.VertexData();
+                vertexData.positions = data;
+                vertexData.indices = [];
+
+                // Calculate indices for the vertices of the mesh
+                var idx = 0;
+                for (var i = 0; i < (2 * size / step) * (2 * size / step); i++) {
+                    if ((i + 1) % (2 * size / step + 1) !== 0) {
+                        vertexData.indices.push(idx);
+                        vertexData.indices.push(idx + 1);
+                        vertexData.indices.push(idx + 2 * size / step + 1);
+
+                        vertexData.indices.push(idx + 1);
+                        vertexData.indices.push(idx + 2 * size / step + 2);
+                        vertexData.indices.push(idx + 2 * size / step + 1);
+                    }
+                    idx++;
+                }
+
+                // vertexData.applyToMesh(customMesh, false);
+                // customMesh.convertToFlatShadedMesh(); // Makes the mesh flat-shaded, giving it a faceted look
+                
+                // var material = new BABYLON.StandardMaterial("material" + name, scene);
+                // material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+                // customMesh.material = material;
+                // customMesh.receiveShadows = true;
+                // shadowGenerator.addShadowCaster(customMesh);
+
+                // return customMesh;
+
+
+                vertexData.applyToMesh(customMesh, false);
+    customMesh.convertToFlatShadedMesh(); // Makes the mesh flat-shaded, giving it a faceted look
+    
+    var material = new BABYLON.StandardMaterial("material" + name, scene);
+    material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+    material.backFaceCulling = false; // Make the mesh visible from both sides
+    customMesh.material = material;
+    customMesh.receiveShadows = true;
+    shadowGenerator.addShadowCaster(customMesh);
+
+    return customMesh;
+
+
+            }
+
+            // Equation y = x^2 + z^2
+            var paraboloid = createMathematicalMesh("paraboloid", function (x, z) {
+                return (x * x + z * z) /20
+            }, scene);
+
+            // Equation y = x + z
+            var plane = createMathematicalMesh("plane", function (x, z) {
+                return x + z;
+            }, scene);
+
+            plane.position.y = -5; // Offset the plane so that both meshes are visible
+
+            return scene;
+        };
+
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        window.addEventListener('resize', function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

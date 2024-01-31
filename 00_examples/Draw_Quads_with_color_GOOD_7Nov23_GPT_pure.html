@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Babylon.js Quad Mesh Example</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        html, body { overflow: hidden; width: 100%; height: 100%; margin: 0; padding: 0; }
+        #renderCanvas { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        // Define the JSON structure for mymesh with 10 quads
+        let mymesh = {
+            quads: []
+        };
+
+        // Helper function to generate a random point in 3D space
+        function randomPoint() {
+            return {
+                x: Math.random() * 10 - 5,
+                y: Math.random() * 10 - 5,
+                z: Math.random() * 10 - 5
+            };
+        }
+
+        // Populate the mymesh structure with quads
+        for (let i = 0; i < 100000; i++) {
+            mymesh.quads.push({
+                points: [randomPoint(), randomPoint(), randomPoint(), randomPoint()],
+                thick: Math.random() // Random thickness value between 0 and 1
+            });
+        }
+
+        var canvas = document.getElementById("renderCanvas"); // Get the canvas element 
+        var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+        // Create the scene space
+        var scene = new BABYLON.Scene(engine); 
+
+        // Add a camera to the scene and attach it to the canvas
+        var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(0, 0, 0), scene);
+        camera.attachControl(canvas, true);
+
+        // Add lights to the scene
+        var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+        var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+        // This array will hold information for each custom mesh
+        var customMeshesInfo = [];
+
+        // Go through each quad and prepare vertex data
+        mymesh.quads.forEach((quad, index) => {
+            let positions = [
+                quad.points[0].x, quad.points[0].y, quad.points[0].z,
+                quad.points[1].x, quad.points[1].y, quad.points[1].z,
+                quad.points[2].x, quad.points[2].y, quad.points[2].z,
+                quad.points[3].x, quad.points[3].y, quad.points[3].z
+            ];
+
+            // Indices for two triangles to make a quad
+            let indices = [
+                0, 1, 2,
+                2, 3, 0
+            ];
+
+            // Create custom mesh
+            var customMesh = new BABYLON.Mesh("customMesh" + index, scene);
+
+            // Set positions and indices
+            var vertexData = new BABYLON.VertexData();
+            vertexData.positions = positions;
+            vertexData.indices = indices;
+            vertexData.applyToMesh(customMesh, false);
+
+            // Create material for the mesh that doesn't cull back faces
+            var material = new BABYLON.StandardMaterial("material" + index, scene);
+            material.backFaceCulling = false; // Make both sides visible
+            material.diffuseColor = quad.thick > 0.5 ? new BABYLON.Color3(1, 0, 0) : new BABYLON.Color3(0, 1, 0); // Color based on the thick property
+            customMesh.material = material;
+
+            // Push the custom mesh to our info array
+            customMeshesInfo.push({
+                mesh: customMesh,
+                thick: quad.thick
+            });
+        });
+
+        // Render loop
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        // Resize the engine on window resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

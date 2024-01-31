@@ -1,0 +1,16 @@
+{
+  "yaml-plus-json": {
+    "convertOnRename": true,
+    "yamlIndent": 2,
+    "keepOriginalFiles": "always",
+    "fileExtensions": {
+      "yaml": ".yaml",
+      "json": ".json"
+    }
+  },
+  "julia.environmentPath": "f:\\PhD\\JS\\BaVis\\BaVis"
+}
+
+
+
+
