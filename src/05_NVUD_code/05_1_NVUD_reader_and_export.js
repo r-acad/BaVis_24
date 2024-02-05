@@ -259,7 +259,7 @@ function create_geometry_object_model_from_NVUD(nvud_object) {
 
 
 function getColorByDepth(depth) {
-    const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD', '#FF69B4', '#20B2AA'];
+    const colors = ['#FF6347', '#4682B4', '#32CD32', '#886600', '#6A5ACD', '#FF00FF', '#20B2AA'];
     return colors[depth % colors.length]; // Cycle through colors if depth exceeds array length
 }
 
