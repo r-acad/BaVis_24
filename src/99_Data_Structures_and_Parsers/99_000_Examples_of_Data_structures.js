@@ -78,21 +78,62 @@ jsn = `{
 
     { ID: VTP_hinge,  DEF: [{START: AC_end_of_fuselage, END: VTP_hinge_tip }] 
                           , render_params: {arrow_color: yellow, thickness : .3, arrow_at_start_point : true, arrow_at_end : true,  label_at_midpoint: "VTP"}      }
-
-    
+   
     ] // end of segments
-
-
 
     SHELLs: [
       { ID: 1, NODE_IDs: [AC_end_of_fuselage, VTP_hinge_tip, VTP_TE_TIP, VTP_TE_ROOT], color: 0.1 }
 
     ]
 
-
   }
 }`
 
+
+
+
+
+
+
+
+jsn_nodes_ac = `{
+  name: Coordsys_validation_complex_case
+  group: basic_group
+  model_data: {
+
+    NODEs: [  
+
+    {ID: wing_Station1_LE, DEF: [ 0 , 10, 0   ] }
+    {ID: wing_Station1_TE, DEF: [ 20 , 10, 5   ] }
+
+    {ID: wing_Station2_LE, DEF: [ 1 , 20, 1   ] }
+    {ID: wing_Station2_TE, DEF: [ 21 , 20, 51   ] }
+
+    {ID: tail_Station1_LE, DEF: [ 0 , 0, 0   ] }
+    {ID: tail_Station1_TE, DEF: [ 20 , 0, 5   ] }
+
+    {ID: tail_Station2_LE, DEF: [ 1 , 10, 2   ] }
+    {ID: tail_Station2_TE, DEF: [ 21 , 10, 53   ] }
+    
+  ]  
+
+    BALLs: [        
+
+      { ID: wing_Station1_LE_ball, NODE_IDs: [ wing_Station1_LE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+      { ID: wing_Station1_TE_ball, NODE_IDs: [ wing_Station1_TE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+
+      { ID: wing_Station2_LE_ball, NODE_IDs: [ wing_Station2_LE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+      { ID: wing_Station2_TE_ball, NODE_IDs: [ wing_Station2_TE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+      
+      { ID: tail_Station1_LE_ball, NODE_IDs: [ tail_Station1_LE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+      { ID: tail_Station1_TE_ball, NODE_IDs: [ tail_Station1_TE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+
+      { ID: tail_Station2_LE_ball, NODE_IDs: [ tail_Station2_LE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+      { ID: tail_Station2_TE_ball, NODE_IDs: [ tail_Station2_TE    ], R: 1, render_params: {color: yellow ,  alpha : 1}  }
+
+    ]  
+  }
+}`
 
 
 

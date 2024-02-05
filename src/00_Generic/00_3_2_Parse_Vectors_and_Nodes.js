@@ -147,7 +147,11 @@ function get_Vector_Coordinates_from_Definition(DEF, geometric_data_object) {
                                 //return _evaluate_vector_definition_by_ID_vec_or_expression(_find_Vector_or_node_by_Id(def).DEF)
 
                                 // Search in the complete list of vectors and nodes, in this order
-                                concatenation_of_VECTORs_and_NODEs = geometric_data_object.model_data.VECTORs.concat(geometric_data_object.model_data.NODEs)
+
+                                data_VECTORS = geometric_data_object.model_data.VECTORs == undefined ? []  : geometric_data_object.model_data.VECTORs  // this is to prevent error if there are no vectors or nodes defined
+                                data_NODES = geometric_data_object.model_data.NODEs == undefined ? []  : geometric_data_object.model_data.NODEs
+
+                                concatenation_of_VECTORs_and_NODEs = data_VECTORS.concat(data_NODES)
 
                                 evaluated_coordinates = concatenation_of_VECTORs_and_NODEs.find(n => n.ID == def).DEF  // look-up nodes in global data object                               
                                 parsed_coor_sys = evaluated_coordinates[3] == undefined ? "*BASIC*" : evaluated_coordinates[3]   // if the node/vector has not 4th coordinate, then it's reference coordinate system is set to 0 (the BASIC)

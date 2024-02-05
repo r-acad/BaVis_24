@@ -1,4 +1,8 @@
 
+
+
+
+
 //****************************************************************** */
 // Given the ID of a variable in the object VARIABLES, it returns directly its numerical value if it's a basic definition,
 // or evaluates recursively the expressions to resolve the value from the dependencies
@@ -8,6 +12,8 @@ function get_Scalar_Value_from_Parameters(variableId, geometric_data_object) {
     
         // Extract VARIABLES array from geometric_data_object
         const variablesArray = geometric_data_object.model_data.PARAMETERs
+
+        if (variablesArray == undefined)  {return variableId}
     
         // Create a map of variables for quick access. // OJO!!! this is innefficient!! Change code to access directly the object
         const variablesMap = new Map()
@@ -78,5 +84,62 @@ function get_Scalar_Value_from_Parameters(variableId, geometric_data_object) {
                 }  // end of resolveValue
       }  // end of get_Scalar_Value_from_Parameters
     //****************************************************************** */
+
     
+
+
+
     
+// Given the ID of a variable in the object VARIABLES, this function returns its numerical value directly if it's a basic definition,
+// or evaluates recursively the expressions to resolve the value from the dependencies.
+function get_Scalar_Value_from_Parameters_new_but_not_working(variableId, geometric_data_object) {
+    const variablesArray = geometric_data_object.model_data.PARAMETERs;
+    
+    // Function to check if a string is a valid expression
+    function string_is_a_valid_expression(text) {
+        return typeof text === 'string' && text.startsWith('<') && text.endsWith('>');
+    }
+    
+    // Function to parse and evaluate a valid expression
+    function parse_valid_expression(text) {
+        if (!string_is_a_valid_expression(text)) return;
+
+        const expression = text.slice(1, -1).replace(/\b(\w+)\b/g, (match) => {
+            return resolveValue(match);
+        });
+
+        try {
+            let sanitizedExpression = expression.replace(/--/g, '+')
+                                                .replace(/\/\+/g, '/')
+                                                .replace(/\*\+/g, '*')
+                                                .replace(/-\(([^\)]+)\*\*([^\)]+)\)/g, '-(($1)**$2)');
+            return eval(sanitizedExpression);
+        } catch (error) {
+            console.error('Error evaluating expression:', text, error);
+        }
+    }
+
+    // Function to resolve the value of a variable
+    function resolveValue(id) {
+        // Check if id is numeric
+        if (!isNaN(id)) {
+            return parseFloat(id);
+        }
+
+        // Find the variable in the array
+        const variable = variablesArray.find(v => v.ID === id);
+        if (variable) {
+            if (typeof variable.DEF === 'number') {
+                return variable.DEF;
+            } else if (typeof variable.DEF.EXPRESSION === 'string') {
+                return parse_valid_expression(variable.DEF.EXPRESSION);
+            }
+        } else {
+            console.error('Scalar variable not found:', id);
+        }
+    }
+
+    return resolveValue(variableId);
+}
+
+

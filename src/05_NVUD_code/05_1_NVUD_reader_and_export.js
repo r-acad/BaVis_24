@@ -3,6 +3,8 @@
 document.getElementById('NVUDfileInput').addEventListener('change', function() {
     const outputContainer = document.getElementById('jsonOutput');
     outputContainer.innerHTML = ''; // Clear previous output
+    outputContainer.style.width = '100%'; // Ensure it takes the full width of its container
+
     const files = this.files;
 
     if (files.length) {
@@ -11,13 +13,16 @@ document.getElementById('NVUDfileInput').addEventListener('change', function() {
             reader.readAsText(file, "UTF-8");
             reader.onload = function(evt) {
                 const lines = evt.target.result.split('\n');
-                const jsonObject = get_CND_structure_from_file(lines);
-                currentJsonObject = jsonObject; // Store the latest JSON object
+                const jsonObject = get_CND_structure_from_file(lines); // Assuming this function is defined elsewhere
+                // currentJsonObject = jsonObject; // Store the latest JSON object, ensure this variable is declared elsewhere if used
                 const fileOutputContainer = document.createElement('div');
                 fileOutputContainer.id = `file-output-${index}`;
+                fileOutputContainer.style.width = '100%'; // Ensure each file's container takes full width
                 outputContainer.appendChild(fileOutputContainer);
 
                 buildTree(jsonObject, fileOutputContainer);
+
+                create_geometry_object_model_from_NVUD(jsonObject)
             };
             reader.onerror = function(evt) {
                 const errorOutput = document.createElement('div');
@@ -25,8 +30,232 @@ document.getElementById('NVUDfileInput').addEventListener('change', function() {
                 outputContainer.appendChild(errorOutput);
             };
         });
-    }
+        }
 });
+
+
+
+
+/*
+function extractPlanformStationData(object) {
+    const result = {};
+  
+    function searchAndExtract(obj, parentName) {
+      Object.keys(obj).forEach(key => {
+        if (key.includes("Planform")) {
+          // Initialize parentName key in result if not already initialized
+          result[parentName] = result[parentName] || {};
+  
+          // Now, we need to look for children of Planform containing "Station" in their names
+          Object.keys(obj[key]).forEach(stationKey => {
+            if (stationKey.includes("Station")) {
+              // Extract the station data
+              const stationData = obj[key][stationKey];
+              // Save the data under the parent name, categorized by station type
+              result[parentName][stationKey] = {
+                Y: stationData.Y,
+                LE_X: stationData.LE_X,
+                LE_Z: stationData.LE_Z,
+                TE_X: stationData.TE_X,
+                TE_Z: stationData.TE_Z,
+              };
+            }
+          });
+        } else if (typeof obj[key] === "object" && obj[key] !== null) {
+          // Recurse into child objects
+          searchAndExtract(obj[key], key);
+        }
+      });
+    }
+  
+    searchAndExtract(object, null);
+    return result;
+  }
+*/
+
+
+
+function extractAndOrderPlanformStationData(object) {
+    const result = {};
+  
+    function searchAndExtract(obj, parentName) {
+      Object.keys(obj).forEach(key => {
+        if (key.includes("Planform")) {
+          // Initialize parentName key in result if not already initialized
+          result[parentName] = result[parentName] || {};
+  
+          // Collect all stations under Planform into an array
+          const stations = [];
+          Object.keys(obj[key]).forEach(stationKey => {
+            if (stationKey.includes("Station")) {
+              // Push the station data along with its original key to the array
+              stations.push({ key: stationKey, data: obj[key][stationKey] });
+            }
+          });
+  
+          // Sort the stations array based on the Y property
+          stations.sort((a, b) => a.data.Y - b.data.Y);
+  
+          // Assign sorted stations with sequential keys and insert into the result
+          stations.forEach((station, index) => {
+            const sequentialKey = `Station${index + 1}`; // Creating a sequential key
+
+            result[parentName][sequentialKey] = {
+              Y: station.data.Y,
+              Z: station.data.Z,                      
+
+              LE_X: station.data.LE_X,
+              LE_Z: station.data.LE_Z,
+              LE_Y: station.data.LE_Y,
+
+              TE_X: station.data.TE_X,
+              TE_Z: station.data.TE_Z,
+              TE_Y: station.data.TE_Y,
+
+            };
+          });
+        } else if (typeof obj[key] === "object" && obj[key] !== null) {
+          // Recurse into child objects if not a Planform station
+          searchAndExtract(obj[key], key);
+        }
+      });
+    }
+  
+    searchAndExtract(object, null);
+    return result;
+  }
+  
+
+
+
+// Example object
+const data = {
+    wing: {
+      Planform: {
+        CentreStation: {
+        Y: 10,
+        LE_X: 0,
+        LE_Z: 0,
+        TE_X: 20,
+        TE_Z: 5,
+      },
+      RootStation: {
+        Y: 20,
+        LE_X: 1,
+        LE_Z: 1,
+        TE_X: 21,
+        TE_Z: 51,
+      }      
+    },
+    },
+    tail: {
+      Planform: {
+        CentreStation: {
+            Y: 0,
+            LE_X: 0,
+            LE_Z: 0,
+            TE_X: 20,
+            TE_Z: 5,
+          },
+          RootStation: {
+            Y: 10,
+            LE_X: 1,
+            LE_Z: 2,
+            TE_X: 21,
+            TE_Z: 53,
+          }
+      },
+    },
+  };
+
+
+
+  function createCoordsysValidationData(object) {
+    const jsn_nodes_ac = {
+      name: "Coordsys_validation_complex_case",
+      group: "basic_group",
+      model_data: {
+        NODEs: [],
+        BALLs: [],
+      }
+    };
+  
+    Object.keys(object).forEach(section => {
+      Object.keys(object[section]).forEach(station => {
+        const {LE_X0, LE_Z0, Y0, TE_X0, TE_Z0} = object[section][station];
+        const LE_ID = `${section}_${station}_LE`;
+        const TE_ID = `${section}_${station}_TE`;
+
+
+console.log(object[section][station])
+
+        LE_X = Number(object[section][station].LE_X.Value)
+        LE_Y = object[section][station].LE_Y == undefined ?  Number(object[section][station].Y.Value) :  Number(object[section][station].LE_Y.Value)
+        LE_Z = object[section][station].LE_Z == undefined ?  Number(object[section][station].Z.Value) :  Number(object[section][station].LE_Z.Value)
+
+        TE_X = Number(object[section][station].TE_X.Value)
+        TE_Y = object[section][station].TE_Y == undefined ?  Number(object[section][station].Y.Value) :  Number(object[section][station].TE_Y.Value)
+        TE_Z = object[section][station].TE_Z == undefined ?  Number(object[section][station].Z.Value) :  Number(object[section][station].TE_Z.Value)
+
+  
+        // Adding NODEs
+        jsn_nodes_ac.model_data.NODEs.push(
+          {ID: LE_ID, DEF: [LE_X, LE_Y, LE_Z]},
+          {ID: TE_ID, DEF: [TE_X, TE_Y, TE_Z]}
+        );
+  
+        // Adding BALLs
+        jsn_nodes_ac.model_data.BALLs.push(
+          { ID: `${LE_ID}_ball`, NODE_IDs: [LE_ID], R: .3, render_params: {color: "yellow", alpha: 1} },
+          { ID: `${TE_ID}_ball`, NODE_IDs: [TE_ID], R: .3, render_params: {color: "yellow", alpha: 1} }
+        );
+      });
+    });
+  
+    return jsn_nodes_ac;
+  }
+
+
+
+
+
+
+function create_geometry_object_model_from_NVUD(nvud_object) {
+
+    pp = extractAndOrderPlanformStationData(nvud_object)
+    
+    kk = createCoordsysValidationData(pp)
+
+
+
+ var complete_model_data_object_from_file_NVUD = kk  // This variable contains the processed input file into a JS object
+
+ 
+ Create_BALLs_from_Nodes(complete_model_data_object_from_file_NVUD)
+
+
+
+    return pp
+    
+
+
+
+
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function getColorByDepth(depth) {
@@ -36,20 +265,32 @@ function getColorByDepth(depth) {
 
 
 
+
+
 function buildTree(obj, container, depth = 0) {
     container.innerHTML = ''; // Clear the container
     const ul = document.createElement('ul');
     ul.style.listStyleType = 'none';
+    ul.style.padding = '0'; // Ensure padding does not cause overflow
+    ul.style.margin = '1px'; // Reset margins to prevent unexpected spacing
     container.appendChild(ul);
+
+    // Adjust container styles for full width, scrolling, and prevent horizontal overflow
+    container.style.width = '100%'; // Ensure container takes full width of its parent
+    container.style.overflowY = 'auto'; // Enable vertical scrolling if needed
+    container.style.overflowX = 'hidden'; // Hide horizontal scrollbar and prevent overflow
+    container.style.maxHeight = '90vh'; // Set maximum height relative to the viewport height
+    container.style.boxSizing = 'border-box'; // Include padding and border in width and height calculations
 
     Object.keys(obj).forEach(key => {
         const li = document.createElement('li');
+        li.style.listStyleType = 'none'; // Prevent default list styling from affecting layout
+        li.style.paddingLeft = '10px'; // Indent child elements instead of using margin
+        li.style.boxSizing = 'border-box'; // Ensure padding is included in the width calculation
         ul.appendChild(li);
 
-        // Calculate depth for current node
-        const levelDepth = getDepth(obj[key]);
+        const levelDepth = getDepth(obj[key]); // Assuming getDepth is defined elsewhere
 
-        // Create a span for the collapse icon
         const collapseSpan = document.createElement('span');
         collapseSpan.textContent = '+';
         collapseSpan.style.cursor = 'pointer';
@@ -63,11 +304,10 @@ function buildTree(obj, container, depth = 0) {
         };
 
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-            // Create a span for the key name with depth
             const keySpan = document.createElement('span');
             keySpan.textContent = `(${levelDepth}) ${key}`;
             keySpan.style.cursor = 'pointer';
-            keySpan.style.color = getColorByDepth(depth); // Set color based on depth
+            keySpan.style.color = getColorByDepth(depth); // Assuming getColorByDepth is defined elsewhere
 
             li.appendChild(collapseSpan);
             li.appendChild(keySpan);
@@ -75,18 +315,29 @@ function buildTree(obj, container, depth = 0) {
             const childUl = document.createElement('ul');
             childUl.style.display = 'none';
             childUl.style.listStyleType = 'none';
-            childUl.style.marginLeft = '20px';
+            childUl.style.paddingLeft = '10px'; // Adjust padding to ensure content fits within parent
+            childUl.style.marginLeft = '0'; // Reset margin to prevent unexpected spacing
+            childUl.style.boxSizing = 'border-box'; // Include padding in width calculation
             li.appendChild(childUl);
             buildTree(obj[key], childUl, depth + 1);
         } else {
-            // Leaf node
             li.appendChild(document.createTextNode(`(${levelDepth}) ${key}: ${obj[key]}`));
-            li.style.color = getColorByDepth(depth); // Set color based on depth
+            li.style.color = getColorByDepth(depth); // Assuming getColorByDepth is defined elsewhere
             collapseSpan.style.visibility = 'hidden';
-            li.insertBefore(collapseSpan, li.firstChild); // Ensure collapseSpan is still first child even if not visible
+            li.insertBefore(collapseSpan, li.firstChild);
         }
     });
+
+
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,60 @@
+Date : 2024-02-05 18:35:29
+Directory : f:\PhD\JS\BaVis\BaVis_24\src
+Total : 24 files,  -57370 codes, -75744 comments, -5127 blanks, all -138241 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          2 |       -330 |          0 |          0 |       -330 |
+| HTML       |         11 |       -985 |        -17 |       -330 |     -1,332 |
+| NASTRAN    |          1 |     -8,476 |        -60 |         -5 |     -8,541 |
+| JavaScript |          9 |    -12,354 |       -510 |     -1,590 |    -14,454 |
+| TypeScript |          1 |    -35,225 |    -75,157 |     -3,202 |   -113,584 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                 | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                    |         24 |    -57,370 |    -75,744 |     -5,127 |   -138,241 |
+| ..                                                                                                   |         24 |    -57,370 |    -75,744 |     -5,127 |   -138,241 |
+| .. (Files)                                                                                           |          1 |        -88 |        -10 |        -41 |       -139 |
+| ..\assets                                                                                            |          3 |     -8,806 |        -60 |         -5 |     -8,871 |
+| ..\code_examples_non_core                                                                            |         11 |     -3,728 |       -255 |     -1,084 |     -5,067 |
+| ..\code_examples_non_core (Files)                                                                    |          9 |       -831 |         -7 |       -267 |     -1,105 |
+| ..\code_examples_non_core\draw_shells_in_a_single_mesh                                               |          1 |        -66 |          0 |        -22 |        -88 |
+| ..\code_examples_non_core\lib                                                                        |          1 |     -2,831 |       -248 |       -795 |     -3,874 |
+| ..\lib                                                                                               |          9 |    -44,748 |    -75,419 |     -3,997 |   -124,164 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                             | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| f:\PhD\JS\BaVis\BaVis_24\assets\000_awbox.bdf                                                        | NASTRAN    |     -8,476 |        -60 |         -5 |     -8,541 |
+| f:\PhD\JS\BaVis\BaVis_24\assets\mdata.json                                                           | JSON       |       -261 |          0 |          0 |       -261 |
+| f:\PhD\JS\BaVis\BaVis_24\assets\test.json                                                            | JSON       |        -69 |          0 |          0 |        -69 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\Draw_Quads_with_color_GOOD_7Nov23_GPT_pure.html      | HTML       |        -86 |          0 |        -16 |       -102 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\draw_arrow_vectors.html                              | HTML       |        -70 |          0 |        -15 |        -85 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\draw_curves_with_slider_P5_GOOD.html                 | HTML       |        -75 |          0 |        -28 |       -103 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\draw_shells_in_a_single_mesh\index.html              | HTML       |        -66 |          0 |        -22 |        -88 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\example_show_label.html                              | HTML       |        -99 |          0 |        -73 |       -172 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\index2.html                                          | HTML       |        -86 |          0 |        -16 |       -102 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\index2_create_mesh_mathematical_function_GOOD.html   | HTML       |       -128 |         -3 |        -38 |       -169 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\index_gizmo_moves_spotlight_PERFECT_6Nov23_Mod1.html | HTML       |       -107 |          0 |        -39 |       -146 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\json2yaml_yaml2json.html                             | HTML       |        -70 |         -1 |         -9 |        -80 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\lib\js-yaml.js                                       | JavaScript |     -2,831 |       -248 |       -795 |     -3,874 |
+| f:\PhD\JS\BaVis\BaVis_24\code_examples_non_core\specular_reflections_GOOD.html                       | HTML       |       -110 |         -3 |        -33 |       -146 |
+| f:\PhD\JS\BaVis\BaVis_24\index.html                                                                  | HTML       |        -88 |        -10 |        -41 |       -139 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\babylon.d.ts                                                            | TypeScript |    -35,225 |    -75,157 |     -3,202 |   -113,584 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\babylon.gridMaterial.min.js                                             | JavaScript |         -1 |         -1 |          0 |         -2 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\babylon.inspector.bundle.js                                             | JavaScript |         -1 |         -2 |          0 |         -3 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\babylon.js                                                              | JavaScript |         -1 |         -1 |          0 |         -2 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\babylonjs.loaders.min.js                                                | JavaScript |         -1 |         -1 |          0 |         -2 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\js-yaml.js                                                              | JavaScript |     -2,831 |       -248 |       -795 |     -3,874 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\math_library.js                                                         | JavaScript |         -1 |         -8 |          0 |         -9 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\math_source_map.js                                                      | JavaScript |     -6,686 |          0 |          0 |     -6,686 |
+| f:\PhD\JS\BaVis\BaVis_24\lib\p5.min.js                                                               | JavaScript |         -1 |         -1 |          0 |         -2 |
+| Total                                                                                                |            |    -57,370 |    -75,744 |     -5,127 |   -138,241 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
