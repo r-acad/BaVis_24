@@ -3,8 +3,10 @@ const nastran_model = {}
 
 let REL_FILEPATH = "/assets/RUN_11MAY20/"
 
+
+/**
 // https://50linesofco.de/post/2019-07-05-reading-local-files-with-javascript
-document.getElementById('fileInput').addEventListener('change', 
+document.getElementById('NASTRANfileInput').addEventListener('change', 
     function selectedFileChanged() {
         if (this.files.length === 0) {
             console.log('No file selected.');
@@ -20,6 +22,45 @@ document.getElementById('fileInput').addEventListener('change',
         reader.readAsText(this.files[0]);
     }
   )
+**/
+
+
+
+  document.getElementById('NASTRANfileInput').addEventListener('change', function selectedFileChanged() {
+    if (this.files.length === 0) {
+        console.log('No file selected.');
+        return;
+    }
+
+    let allLines = []; // Array to hold lines from all files
+    let filesRead = 0; // Counter to track the number of files read
+
+    // Function to check if all files have been processed
+    const checkAllFilesProcessed = () => {
+        if (filesRead === this.files.length) {
+            // Once all files are read, call build_nastran_model with all lines
+            build_nastran_model(allLines);
+        }
+    };
+
+    // Iterate over all selected files
+    Array.from(this.files).forEach((file) => {
+        const reader = new FileReader();
+        
+        reader.onload = function fileReadCompleted() {
+            // Split the content by new line and add to allLines array
+            const fileLines = this.result.split('\n');
+            allLines = allLines.concat(fileLines);
+            filesRead++; // Increment the counter for files read
+            checkAllFilesProcessed(); // Check if all files have been processed
+        };
+
+        reader.readAsText(file); // Read the file as text
+    });
+});
+
+
+
 
 
 //********************************************************************************************************** */
@@ -398,6 +439,11 @@ function get_clean_bulk_data_section (nastran_lines) {  // get all the lines bet
         } else {return line}
     })
 
+return filt_lines
+
+
+    /**   OJO!!! for the time being ignore this selection, allow multiple complete .bdf files to be read at once
+     * 
     // Find indexes of start and end of BULK section
     const begin_bulk = filt_lines.findIndex(line => line.includes("BEGIN BULK"));
     const enddata = filt_lines.findIndex(line => line.includes("ENDDATA"));
@@ -407,6 +453,7 @@ function get_clean_bulk_data_section (nastran_lines) {  // get all the lines bet
     } else {
     return  filt_lines.slice(begin_bulk + 1, enddata  )
     }
+    **/
 
 }
 

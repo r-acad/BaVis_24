@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Open index.html",
             "outputCapture": "console", 
-            "file": "F:\\PhD\\JS\\BaVis\\BaVis\\index.html"
+            "file": "${workspaceFolder}\\index.html"
         }
     ]
 }

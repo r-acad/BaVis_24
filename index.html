@@ -24,12 +24,33 @@
 </head>
 <body>
     <div class="input-group">
-        <input type="file" id="fileInput">
+   <!----     <input type="file" id="fileInput"> -->
+
+        <label for="NASTRANfileInput" style="background-color: #4CAF50; color: white; padding: 10px; border: none; cursor: pointer;">Open NASTRAN files</label>
+        <input type="file" id="NASTRANfileInput" accept=".bdf" multiple style="display: none;" />
+
+
         <input type="number" id="pointCountInput" placeholder="Enter number of points">
         <button id="createPointsBtn">Create Points and Lines</button>
         <button id="resetSceneBtn">Reset Scene</button>
         <input id="number" placeholder="Input a number" >
         <button id="submit">Square</button>
+
+
+
+<!---- Read and Export NVUD files-->
+
+        <label for="NVUDfileInput" style="background-color: #4CAF50; color: white; padding: 10px; border: none; cursor: pointer;">Open NVUD files</label>
+        <input type="file" id="NVUDfileInput" accept=".nvud" multiple style="display: none;" />
+      
+        <button id="exportXml">Export as XML</button>
+        <button id="exportYaml">Export as YAML</button>
+        <button id="exportJsonBtn">Export JSON</button>
+      
+      
+        <div id="jsonOutput"></div><!-- Changed from<pre> to<div> to accommodate the tree structure -->
+<!---- END OF Read and Export NVUD files-->
+
         <h4>Outputs</h4>
         <ul id="list"></ul>
     </div>
@@ -59,11 +80,9 @@
     <script src="./src/00_Generic/00_4_Color_Functions.js" ></script>
     <script src="./src/00_Generic/00_5_Coordinate_Transformations.js" ></script>
 
-
     <script src="./src/01_Scene_and_Lights/00_Main.js"></script>
     <script src="./src/01_Scene_and_Lights/01_Create_Scene.js"></script>
     <script src="./src/01_Scene_and_Lights/01_01_ground_grid_axes.js"></script>
-
 
     <script src="./src/02_Create_Geometries/02_Create_and_Render_Geometries.js"></script>
     <script src="./src/02_Create_Geometries/02_01_Create_Smooth_Surface.js"></script>
@@ -72,20 +91,20 @@
     <script src="./src/02_Create_Geometries/02_04_Create_Arrows_for_Vectors.js"></script>
     <script src="./src/02_Create_Geometries/02_05_Create_Labels.js"></script>
     <script src="./src/02_Create_Geometries/02_06_Create_Coordinate_Systems.js"></script>
-    <script src="./src/02_Create_Geometries/02_000_points_lines_to_be_deprecated.js"></script>
-    
+    <script src="./src/02_Create_Geometries/02_000_points_lines_to_be_deprecated.js"></script>   
         
     <script src="./src/03_Render_Loop_and_Events/03_Render_Loop.js"></script>
-
     
     <script src="./src/99_Data_Structures_and_Parsers/99_000_Examples_of_Data_structures.js"></script>
     <script src="./src/99_Data_Structures_and_Parsers/99_001_new_nastran_reader.js" ></script>   
     <script src="./src/99_Data_Structures_and_Parsers/99_002_Load_STL_File.js" ></script>   
     <script src="./src/99_Data_Structures_and_Parsers/99_003_convert_MyJSON_to_proper_JSON.js" ></script>   
 
-
     <script src="./src/04_REST_Code/GET_REST_points_to_plot.js"></script>
     <script src="./src/04_REST_Code/REST_CLIENT_POINTS_string_GOOD.js"></script>
+
+    <script src="./src/05_NVUD_code/05_1_NVUD_reader_and_export.js"></script>
+
 
     <script>
 
