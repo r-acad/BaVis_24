@@ -4,7 +4,7 @@ function create_ground(size, light, shadowGenerator) {
 
             // Create a basic plane as the ground
             //var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 100, height: 100, subdivisions: 2}, scene);
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 200, height: 200}, scene);
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: size, height: size}, scene);
             //var groundMaterial = new BABYLON.GridMaterial("groundMat", scene);
 
             ground.position.y = 0
@@ -132,8 +132,8 @@ function createCone(position, height, diameter, color, scene, axis) {
     return cone;
 }
 
-var axisLength = size/2; // Length of each axis
-var axisThickness = 1; // Thickness of the axes
+var axisLength = size/40; // Length of each axis
+var axisThickness = axisLength/40; // Thickness of the axes
 
 // Red X Axis
 var xAxis = BABYLON.MeshBuilder.CreateCylinder("xAxis", { height: axisLength, diameter: axisThickness }, scene);
@@ -157,8 +157,8 @@ zAxis.rotation.x = Math.PI / 2;
 
 // Cones to represent the direction of the axes
 // The cones are placed at the end of the axes, and their rotation is aligned with the axes
-var coneHeight = size/40;
-var coneDiameter = size/80;
+var coneHeight = axisThickness*4
+var coneDiameter = axisThickness*2
 createCone(new BABYLON.Vector3(axisLength, 0, 0), coneHeight, coneDiameter, new BABYLON.Color3(1, 0, 0), scene, 'x');
 createCone(new BABYLON.Vector3(0, axisLength, 0), coneHeight, coneDiameter, new BABYLON.Color3(0, 1, 0), scene, 'y');
 createCone(new BABYLON.Vector3(0, 0, axisLength), coneHeight, coneDiameter, new BABYLON.Color3(0, 0, 1), scene, 'z');

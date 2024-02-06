@@ -75,7 +75,8 @@ function build_nastran_model (text_bdf) {
             "group": "exampleGroup",
             "geometric_data_object": {
             "NODEs": nastran_model.GRIDs,
-            "SHELLs": nastran_model.CSHELLs
+            "SHELLs": nastran_model.CSHELLs,
+            "Bounding_Box": nastran_model.Bounding_Box
             }
         }
 
@@ -492,7 +493,25 @@ function flatten_read_nastran_file (bdf_lines_array_raw) {
 
 // TRANSFORM GRID COORDINATES
 function transform_grid_coordinates () {
+
+    // Initialize values for bounding box
+min_x = 99999999999999
+max_x = -99999999999999
+min_y = 99999999999999
+max_y = -99999999999999
+min_z = 99999999999999
+max_z = -99999999999999
+
         Object.values(nastran_model.GRIDs).forEach(grid => {
+
+            min_x = Math.min(min_x, grid.X[1])                        
+            max_x = Math.max(min_x, grid.X[1]) 
+            min_y = Math.min(min_y, grid.X[2])                        
+            max_y = Math.max(min_y, grid.X[2]) 
+            min_z = Math.min(min_z, grid.X[3])                        
+            max_z = Math.max(min_z, grid.X[3]) 
+
+
             if (grid.CP !== 0) {   // transform grid coordinates
                 let cord = nastran_model.CORDs[grid.CP]
                 grid.Xr = grid.X  // Read coordinates from .bdf
@@ -501,4 +520,14 @@ function transform_grid_coordinates () {
                         cord.U, cord.V, cord.W, // U, V, W: CORDR unit vectors
                         grid.Xr)   // P: point to be transformed
             }})
+
+
+            box_x = max_x - min_x
+            box_y = max_y - min_y
+            box_z = max_z - min_z
+
+            max_box_side = Math.max(box_x, box_y, box_z)  // get the longest side of the bounding box to guess units OJO!!!
+
+            nastran_model["Bounding_Box"] = {min_x: min_x, min_y: min_y, min_z: max_z, max_x: max_x, max_y: max_y, max_z: max_z,  max_box_side: max_box_side      }
+
 }

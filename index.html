@@ -5,14 +5,18 @@
     <meta charset="UTF-8">
     <title>Babylon.js Scene with Points and Lines</title>
     <style>
-        body { 
-            margin: 0; 
+        body, html {
             overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
         canvas { 
             width: 100%; 
             height: 100%; 
             background: linear-gradient(to top, #003366, #6699ff);
+            touch-action: none;
         }
         .input-group {
             position: absolute;
@@ -22,13 +26,6 @@
         }
 
 
-        #jsonOutput {
-        width: 100%;
-        box-sizing: border-box; /* Include padding and border in the element's total width and height */
-        }
-    </style>
-
-    <style>
         #jsonOutput {
         width: 100%;
         box-sizing: border-box; /* Include padding and border in the element's total width and height */

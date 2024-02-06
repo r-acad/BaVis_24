@@ -2,10 +2,12 @@
 
 function Create_and_Render_Geometries() {
 
-/*
+
 // Add objects to the scene
 create_ground(200, light, shadowGenerator) 
 
+
+/*
 
 // define generic functions for plotting surfaces
 recipe1 = {"color3" : [.4, 1, .6] , "alpha" : .5, "wireframe" : false}
@@ -36,6 +38,7 @@ BABYLON.SceneLoader.ImportMesh("", "./assets/", "c6dd.obj", scene, function (mes
 */
 
 
+/*
 var complete_model_data_object_from_file = convert_MyJSON_to_proper_JSON(jsn)  // This variable contains the processed input file into a JS object
 
 find_root_coordinate_systems(complete_model_data_object_from_file)
@@ -45,7 +48,7 @@ find_root_coordinate_systems(complete_model_data_object_from_file)
 add_segments_to_scene(complete_model_data_object_from_file)
 
 add_Coordinate_Systems_to_scene(complete_model_data_object_from_file)
-
+*/
 
 
 }

@@ -1,5 +1,9 @@
 function Create_Mesh_from_Nodes(Model_Data_Object, scale_mesh_by = 1, single_mesh = true, material_alpha = 1) {
 
+
+  scale_mesh_by = (Model_Data_Object.geometric_data_object.Bounding_Box.max_box_side < 200) ? 1 : 0.001
+
+  
 initTime = Date.now()
 
 //var Model_Data_Object = mesh_by_Nodes_data_example   // UNCOMMENT FOR TESTING WITH TEST DATA, OVERRIDE INPUT TO FUNCTION
@@ -47,7 +51,7 @@ if (single_mesh) {
 
 
 
-            let color =  gradcol((nastran_model.PSHELLs[shell.PID].T*1000), 1, 13, true) 
+            let color =  gradcol((nastran_model.PSHELLs[shell.PID].T*1000*scale_mesh_by), 3, 10, true) 
              colors.push(color.r, color.g, color.b, 1)
 
 

@@ -21,13 +21,57 @@
          scene.fogEnd = 500.0;
          */
 
-            // Camera
-            var camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 150, new BABYLON.Vector3(0, 0, 0), scene);
-            camera.attachControl(canvas, true)
-            //camera.upperBetaLimit = Math.PI / 2;
-	        camera.lowerRadiusLimit = 4;
+        var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(0, 0, 0), scene);
 
-           
+        camera.fov = 0.647;
+    
+         camera.attachControl(canvas, true);
+         camera.upperBetaLimit = Math.PI;
+         camera.lowerBetaLimit = 0;
+         camera.lowerAlphaLimit = null;
+         camera.upperAlphaLimit = null;
+         camera.inertia = 0.9;
+         camera.lowerRadiusLimit = .2;
+         camera.upperRadiusLimit = 1000;
+         camera.wheelPrecision = 150;
+         
+                // Adjust zoom rate proportional to distance
+                camera.onViewMatrixChangedObservable.add(() => {
+                    var distance = BABYLON.Vector3.Distance(camera.position, camera.target);
+                    camera.wheelPrecision = 200 / distance; // Adjust this value as needed
+                });       
+
+         var originalTarget = camera.target.clone(); // Store original target
+         var lastTarget = camera.target.clone(); // Initialize last target with the initial camera target
+         
+
+         canvas.addEventListener('pointerdown', function(evt) {
+            if (evt.button === 1) { // Right mouse button
+                evt.preventDefault(); // Prevent context menu
+                var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+                if (pickResult.hit) {
+                    lastTarget = camera.target.clone(); // Update last target before moving to a new one
+                    smoothTransitionToTarget(pickResult.pickedPoint, camera, scene, 0.3);
+                }
+            }
+        });
+
+        canvas.addEventListener('dblclick', function(evt) {
+            var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+            if (!pickResult.hit) { // If double-click did not hit any mesh, return to last target
+                smoothTransitionToTarget(lastTarget, camera, scene, 0.3);
+            }
+        });
+
+        window.addEventListener('keydown', function(evt) {
+            if (evt.key === 'h' || evt.key === 'H') {
+                smoothTransitionToTarget(lastTarget, camera, scene, 0.3);
+            } else if (evt.key === 'o' || evt.key === 'O') {
+                smoothTransitionToTarget(originalTarget, camera, scene, 0.3);
+            }
+        });
+
+
             // CREATE LIGTHS
             
             // // Add HemiLight
@@ -108,3 +152,18 @@
             return [scene, shadowGenerator, dlight]
         } //END OF CREATE SCENE FUNCTION
 
+
+        function smoothTransitionToTarget(newTarget, camera, scene, durationInSeconds) {
+            var frameRate = 60;
+            var totalFrames = durationInSeconds * frameRate;
+
+            var animCamTarget = new BABYLON.Animation("animCam", "target", frameRate, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+            
+            var keys = []; 
+            keys.push({ frame: 0, value: camera.target });
+            keys.push({ frame: totalFrames, value: newTarget });
+            
+            animCamTarget.setKeys(keys);
+            
+            scene.beginDirectAnimation(camera, [animCamTarget], 0, totalFrames, false);
+        }
