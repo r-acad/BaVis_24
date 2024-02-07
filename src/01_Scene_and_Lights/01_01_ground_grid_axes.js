@@ -4,7 +4,17 @@ function create_ground(size, light, shadowGenerator) {
 
             // Create a basic plane as the ground
             //var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 100, height: 100, subdivisions: 2}, scene);
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: size, height: size}, scene);
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: size, height: size,  subdivisions: 20}, scene);
+
+            ground.rotation.z = Math.PI / 2;
+            ground.rotation.y = Math.PI / 2;
+
+            //ground.up = new BABYLON.Vector3(0,0,1)
+
+            //var ground = BABYLON.MeshBuilder.CreateGround('ground1', {width: 6, height: 6, subdivisions: 2}, scene);
+
+
+
             //var groundMaterial = new BABYLON.GridMaterial("groundMat", scene);
 
             ground.position.y = 0
@@ -15,12 +25,15 @@ function create_ground(size, light, shadowGenerator) {
             groundMaterial.lineColor = new BABYLON.Color3(0.8, 0.8, 0.8); // Light grey lines
             groundMaterial.gridRatio = 1;
             ground.material = groundMaterial;
+            ground.material.alpha = .4
             // Receive shadows
             ground.receiveShadows = true;
 
+
+            
             // Creating minor ground grid lines
             var minor_lines = [];
-            var minor_lineColor = new BABYLON.Color3(0.6, 0.6, 0.7);
+            var minor_lineColor = new BABYLON.Color3(0.7, 0.8, 0.9);
             
             var minor_step = 1
 
@@ -36,9 +49,11 @@ function create_ground(size, light, shadowGenerator) {
             minor_gridLines.color = minor_lineColor;
             minor_gridLines.isPickable = true
 
+
+
             // Creating major ground grid lines
             var major_lines = [];
-            var major_lineColor = new BABYLON.Color3(0.7, 0.8, 0.9);
+            var major_lineColor = new BABYLON.Color3(0.9, 0.99, 0.99);
             
             var major_step = 10 //minor_step * 10
 
@@ -132,8 +147,8 @@ function createCone(position, height, diameter, color, scene, axis) {
     return cone;
 }
 
-var axisLength = size/40; // Length of each axis
-var axisThickness = axisLength/40; // Thickness of the axes
+var axisLength = size/50; // Length of each axis
+var axisThickness = axisLength/80; // Thickness of the axes
 
 // Red X Axis
 var xAxis = BABYLON.MeshBuilder.CreateCylinder("xAxis", { height: axisLength, diameter: axisThickness }, scene);

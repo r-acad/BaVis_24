@@ -21,9 +21,20 @@
          scene.fogEnd = 500.0;
          */
 
-        var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 20, new BABYLON.Vector3(0, 0, 0), scene);
+//        var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2,  Math.PI / 2,  20, new BABYLON.Vector3(0, 0, 0), scene);
+
+
+// Parameters: name, alpha, beta, radius, target, scene
+// Adjust alpha and beta to point in the (0,-1,0) direction with an up vector of (0,0,1)
+var camera = new BABYLON.ArcRotateCamera("Camera", -1* Math.PI / 3,  Math.PI / 3, 30, new BABYLON.Vector3(0, 0, 0), scene);
+
+
 
         camera.fov = 0.647;
+        camera.upVector = new BABYLON.Vector3(0, 0, 1)
+
+
+        camera.rotation.z = Math.PI / 2
     
          camera.attachControl(canvas, true);
          camera.upperBetaLimit = Math.PI;
@@ -35,10 +46,11 @@
          camera.upperRadiusLimit = 1000;
          camera.wheelPrecision = 150;
          
-                // Adjust zoom rate proportional to distance
+                // Adjust zoom rate and panning sensibility proportional to distance
                 camera.onViewMatrixChangedObservable.add(() => {
                     var distance = BABYLON.Vector3.Distance(camera.position, camera.target);
                     camera.wheelPrecision = 200 / distance; // Adjust this value as needed
+                    camera.panningSensibility = 5000 / distance  // Adjust this value as needed
                 });       
 
          var originalTarget = camera.target.clone(); // Store original target
@@ -74,19 +86,30 @@
 
             // CREATE LIGTHS
             
-            // // Add HemiLight
-            var light1 = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
-            light1.intensity = 0.2
-            light1.groundColor = new BABYLON.Color3(0, 0, 1);
+            // // Add HemiLight from above
+            var hemi_light_from_above = new BABYLON.HemisphericLight("hemiLight_above", new BABYLON.Vector3(0, 0, -1), scene);
+            hemi_light_from_above.intensity = 0.2
+            hemi_light_from_above.groundColor = new BABYLON.Color3(0, 0, 1);
 
-            // Add a directional light to the scene
-            var dlight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(1, -2, -1), scene);
+            // // Add HemiLight from below
+            var hemi_light_from_below = new BABYLON.HemisphericLight("hemiLight_below", new BABYLON.Vector3(0, 0, 1), scene);
+            hemi_light_from_below.intensity = 0.2
+            hemi_light_from_below.groundColor = new BABYLON.Color3(0, 0, 1);
+
+            // Add a directional lights to the scene
+            var dlight = new BABYLON.DirectionalLight("dir_from_above", new BABYLON.Vector3(0, 0, -1), scene);
             dlight.position = new BABYLON.Vector3(120, 120, 120);
+            dlight.intensity = 0.8
+
+            var dlight = new BABYLON.DirectionalLight("dir_from_below", new BABYLON.Vector3(0, 0, 1), scene);
+            dlight.position = new BABYLON.Vector3(120, -120, -120);
+            dlight.intensity = 0.5
+
 
 
             // Spotlight
-            var splight = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(0, 4, 0), new BABYLON.Vector3(0, -1, 0), Math.PI / 3, 2, scene);
-            splight.intensity = 1;
+            var splight = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(0, 0, 100), new BABYLON.Vector3(.3, 0, -1), Math.PI / 3, 2, scene);
+            splight.intensity = .5
 
             // Shadow Generator
             var shadowGenerator = new BABYLON.ShadowGenerator(2048, dlight);
@@ -106,8 +129,8 @@
             gizmoManager.attachToMesh(lightGizmo.attachedMesh);
             }
 
-            CreateGizmos(dlight)
-            CreateGizmos(splight)
+            //CreateGizmos(dlight)
+            //CreateGizmos(splight)
 
 
             /*

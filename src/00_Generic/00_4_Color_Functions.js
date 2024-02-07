@@ -1,5 +1,63 @@
 ///  Color scales
 
+
+function scalarToRainbowColor(input_value, min_scale, max_scale, reverse) {
+    // Ensure the scalar is clamped between 0 and 1
+
+
+    scalar = reverse ? (input_value - min_scale) /(max_scale - min_scale ) : ((1- input_value) - min_scale) /(max_scale - min_scale )
+
+    if (scalar > 2) {
+        return new BABYLON.Color3(1, 1, 1); // White
+    }
+
+
+    if (scalar > 1) {
+        return new BABYLON.Color3(0.7, 0, 0.7); // Deep magenta
+    }
+
+
+
+    //scalar = Math.max(0, Math.min(1, scalar));
+
+    // Map the scalar value to the hue range for a rainbow
+    // Red starts at 0°, transitioning to violet up to 270°, but we extend to 360° for a full cycle.
+    // We start at 240° (blue) and end at 0° (red), moving in reverse
+    let hue = 240 - scalar * 240; // This maps 0->240 (blue) to 1->0 (red)
+
+    // Convert hue to RGB using Babylon.js utility functions
+    return HSVtoRGB(hue, 1, 1);
+}
+
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+
+    // Assuming hue is in degrees (0 to 360), saturation and value are in [0, 1]
+    h = h / 360;
+
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    // Convert r, g, b from [0,1] range to Babylon.js Color3
+    return new BABYLON.Color3(r, g, b);
+}
+
+
+
+
+
 gradcol = function grad_col_rgb_oldbutok( level , min = 0, max = 1, reverse = false) {
     // original visual basic function
     let i = (level-min)/(max-min)

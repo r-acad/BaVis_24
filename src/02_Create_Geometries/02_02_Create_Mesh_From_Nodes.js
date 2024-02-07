@@ -51,7 +51,9 @@ if (single_mesh) {
 
 
 
-            let color =  gradcol((nastran_model.PSHELLs[shell.PID].T*1000*scale_mesh_by), 3, 10, true) 
+            //let color =  gradcol((nastran_model.PSHELLs[shell.PID].T*1000*scale_mesh_by), 1, 10, true) 
+            let color =  scalarToRainbowColor((nastran_model.PSHELLs[shell.PID].T*1000*scale_mesh_by), 1, 10, true) 
+
              colors.push(color.r, color.g, color.b, 1)
 
 
