@@ -11,7 +11,7 @@
 
         // Engine and scene creation
             scene = new BABYLON.Scene(engine);
-            scene.clearColor = new BABYLON.Color4(.7, .7, .7, .1); // Transparent clear color to see the gradient background
+            //scene.clearColor = new BABYLON.Color4(.7, .7, .7, 1); // Transparent clear color to see the gradient background
         
         /*
             // Fog

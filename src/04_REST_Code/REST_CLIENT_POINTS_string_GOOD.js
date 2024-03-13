@@ -1,6 +1,7 @@
 
 
 
+/*
     document.getElementById('submit').addEventListener('click', async function (event) {
         const list = document.getElementById('list');
         try {
@@ -22,3 +23,5 @@
             console.error(err)
         }
     })
+
+    */

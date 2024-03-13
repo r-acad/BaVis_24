@@ -259,11 +259,18 @@ function create_geometry_object_model_from_NVUD(nvud_object) {
 
 
 function getColorByDepth(depth) {
-    const colors = ['#FF6347', '#4682B4', '#32CD32', '#886600', '#6A5ACD', '#FF00FF', '#20B2AA'];
+    const colors = [
+        "#D32F2F", // Strong Red
+        "#1976D2", // Deep Sky Blue
+        "#388E3C", // Emerald Green
+        "#7B1FA2", // Rich Purple
+        "#C2185B", // Pink
+        "#E64A19", // Deep Orange
+        "#00796B", // Teal
+    ];
+    
     return colors[depth % colors.length]; // Cycle through colors if depth exceeds array length
 }
-
-
 
 
 
@@ -272,15 +279,16 @@ function buildTree(obj, container, depth = 0) {
     const ul = document.createElement('ul');
     ul.style.listStyleType = 'none';
     ul.style.padding = '0'; // Ensure padding does not cause overflow
-    ul.style.margin = '1px'; // Reset margins to prevent unexpected spacing
+    ul.style.margin = '10px'; // Reset margins to prevent unexpected spacing
     container.appendChild(ul);
 
-    // Adjust container styles for full width, scrolling, and prevent horizontal overflow
-    container.style.width = '100%'; // Ensure container takes full width of its parent
-    container.style.overflowY = 'auto'; // Enable vertical scrolling if needed
-    container.style.overflowX = 'hidden'; // Hide horizontal scrollbar and prevent overflow
-    container.style.maxHeight = '90vh'; // Set maximum height relative to the viewport height
-    container.style.boxSizing = 'border-box'; // Include padding and border in width and height calculations
+    // Apply a translucent background color to the container and allow only this container to scroll vertically
+    container.style.backgroundColor = 'rgba(128, 128, 128, 0.1)'; // Translucent grey background
+    container.style.width = '100%';
+    container.style.overflowY = 'auto'; // Enable vertical scrolling only for the container
+    container.style.overflowX = 'hidden';
+    container.style.maxHeight = '90vh';
+    container.style.boxSizing = 'border-box';
 
     Object.keys(obj).forEach(key => {
         const li = document.createElement('li');
@@ -318,6 +326,7 @@ function buildTree(obj, container, depth = 0) {
             childUl.style.paddingLeft = '10px'; // Adjust padding to ensure content fits within parent
             childUl.style.marginLeft = '0'; // Reset margin to prevent unexpected spacing
             childUl.style.boxSizing = 'border-box'; // Include padding in width calculation
+            // Remove overflowY style to prevent individual levels from scrolling
             li.appendChild(childUl);
             buildTree(obj[key], childUl, depth + 1);
         } else {
@@ -327,10 +336,7 @@ function buildTree(obj, container, depth = 0) {
             li.insertBefore(collapseSpan, li.firstChild);
         }
     });
-
-
 }
-
 
 
 
