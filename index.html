@@ -5,21 +5,14 @@
     <meta charset="UTF-8">
     <title>Babylon.js Scene with Points and Lines</title>
     <link rel="stylesheet" href="styles/button_styles.css">
-
-
 </head>
 <body>
 
-
-
 <div class="input-group">
-    <label for="NASTRANfileInput" style="background-color: #4CAF50; color: rgb(255, 255, 255); padding: 10px; border: none; cursor: pointer;">Read NASTRAN files</label>
-    <input type="file" id="NASTRANfileInput" accept=".bdf" multiple style="display: none;" />
+
 
     <label for="3DfileInput" style="background-color: #223ed7; color: rgb(255, 255, 255); padding: 10px; border: none; cursor: pointer;">Read 3D file</label>
     <input type="file" id="3DfileInput" accept=".stl, .obj" onchange="read_3D_file()" style="display: none;">
-
-
 
 
 <!-- The Modal Form for 3D file parameters-->
@@ -54,10 +47,6 @@
 </div>
 
 
-
-
-
-
 <!---- Read and Export NVUD files-->
 
         <label for="NVUDfileInput" style="background-color: #a55c2f; color: white; padding: 10px; border: none; cursor: pointer;">Open NVUD files</label>
@@ -77,13 +66,20 @@
 
     <canvas id="renderCanvas"></canvas> 
 
+
+
     <!---- Include Online JavaScript Libraries -->
 
     <!----  <script src="https://cdn.babylonjs.com/babylon.js"></script> -->
     <script src="./lib/babylon.js"></script>
 
-    <!----  <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script> -->
-    <!----  <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script> -->
+    <script src="./lib/babylon.inspector.bundle.js"></script>
+
+    <!-- Include the GUI library -->
+    <script src="./lib/babylon.gui.min.js"></script>
+
+    <!-- Include Babylon Grid material -->
+    <script src="./lib/babylon.gridMaterial.min.js"></script>
 
     <script src="./lib/babylonjs.loaders.min.js"></script>
 
@@ -114,6 +110,10 @@
     <script src="./src/02_Create_Geometries/02_000_points_lines_to_be_deprecated.js"></script>   
         
     <script src="./src/03_Render_Loop_and_Events/03_Render_Loop.js"></script>
+
+
+    <script src="./src/06_GUI/manage_GUI.js"></script>
+
     
     <script src="./src/99_Data_Structures_and_Parsers/99_000_Examples_of_Data_structures.js"></script>
     <script src="./src/99_Data_Structures_and_Parsers/99_001_new_nastran_reader.js" ></script>   
@@ -125,8 +125,11 @@
 
     <script src="./src/05_NVUD_code/05_1_NVUD_reader_and_export.js"></script>
 
-
     <script>
+
+
+
+
 
 
     main()   // Do everything
@@ -136,22 +139,10 @@
         // Revise the need for nodes and vectors as independent entities, where vectors could do all the functions   2024 01 11
         // check errors in coordinate transformations: 1- ill-defined coordys (parallel vectors), 2- non-existent coordys
 
+    
 
 
-    function updateScaleValue() {
-    const originalUnits = document.getElementById('originalUnits').value;
-    const scaleFactor = document.getElementById('scaleFactor');
-    const scaleFactorValues = {
-        'm': 1,
-        'dm': 0.1,
-        'cm': 0.01,
-        'mm': 0.001,
-        'in': 39.3700787402,
-        'ft': 3.28083989501
-    };
 
-    scaleFactor.value = scaleFactorValues[originalUnits];
-}
 
 
 

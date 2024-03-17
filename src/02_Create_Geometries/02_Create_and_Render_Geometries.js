@@ -3,7 +3,10 @@
 function Create_and_Render_Geometries() {
 
 // Add objects to the scene
-create_ground(200, light, shadowGenerator) 
+create_ground(1180, light, shadowGenerator) 
+
+
+
 
 
 /*
