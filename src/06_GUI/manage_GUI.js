@@ -5,7 +5,7 @@ var setup_GUI = async function () {
 let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene)
 //let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
 
-let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#31")
+let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#32")
 
 
 const Button_show_global_menu = advancedTexture.getControlByName('Button_show_global_menu')
