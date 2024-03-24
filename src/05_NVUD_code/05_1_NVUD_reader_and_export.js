@@ -33,221 +33,209 @@ document.getElementById('NVUDfileInput').addEventListener('change', function() {
         }
 });
 
+// Mods Lunes
 
 
-
-/*
-function extractPlanformStationData(object) {
-    const result = {};
-  
-    function searchAndExtract(obj, parentName) {
-      Object.keys(obj).forEach(key => {
-        if (key.includes("Planform")) {
-          // Initialize parentName key in result if not already initialized
-          result[parentName] = result[parentName] || {};
-  
-          // Now, we need to look for children of Planform containing "Station" in their names
-          Object.keys(obj[key]).forEach(stationKey => {
-            if (stationKey.includes("Station")) {
-              // Extract the station data
-              const stationData = obj[key][stationKey];
-              // Save the data under the parent name, categorized by station type
-              result[parentName][stationKey] = {
-                Y: stationData.Y,
-                LE_X: stationData.LE_X,
-                LE_Z: stationData.LE_Z,
-                TE_X: stationData.TE_X,
-                TE_Z: stationData.TE_Z,
-              };
-            }
-          });
-        } else if (typeof obj[key] === "object" && obj[key] !== null) {
-          // Recurse into child objects
-          searchAndExtract(obj[key], key);
-        }
-      });
+const jsn_nodes_ac = {
+    name: "Geometric model from NVUD",
+    group: "basic_group",
+    model_data: {
+        NODEs: [],
+        BALLs: [],
+        SHELLs: [], 
+        SEGMENTs: []
     }
-  
-    searchAndExtract(object, null);
-    return result;
-  }
-*/
+}
 
 
 
 function extractAndOrderPlanformStationData(object) {
-    const result = {};
-  
+    const result = {}
+
     function searchAndExtract(obj, parentName) {
-      Object.keys(obj).forEach(key => {
-        if (key.includes("Planform")) {
-          // Initialize parentName key in result if not already initialized
-          result[parentName] = result[parentName] || {};
-  
-          // Collect all stations under Planform into an array
-          const stations = [];
-          Object.keys(obj[key]).forEach(stationKey => {
-            if (stationKey.includes("Station")) {
-              // Push the station data along with its original key to the array
-              stations.push({ key: stationKey, data: obj[key][stationKey] });
+        Object.keys(obj).forEach(key => {
+            if (key.includes("Planform") || key.includes("WTD")) {
+            //if (key.includes("WTD")) {
+                // Initialize parentName key in result if not already initialized
+                parent_comp = parentName + "_" + key
+                result[parent_comp] = result[parent_comp] || {}
+
+                // Collect all stations under Planform into an array
+                const stations = []
+                Object.keys(obj[key]).forEach(stationKey => {
+                    if (stationKey.includes("Station")) {
+                        // Push the station data along with its original key to the array
+                        stations.push({ key: stationKey, data: obj[key][stationKey] })
+                    }
+                })
+
+                // Sort the stations array based on the eta property
+                stations.sort((a, b) => a.data.Eta - b.data.Eta)
+
+                // Assign sorted stations with sequential keys and insert into the result
+                stations.forEach((station, index) => {
+                    const sequentialKey = `Station_${index + 1}` // Creating a sequential key
+
+                    result[parent_comp][sequentialKey] = {
+                        Y: station.data.Y,
+                        Z: station.data.Z,
+
+                        LE_X: station.data.LE_X,
+                        LE_Z: ((station.data.LE_Z == undefined) ? station.data.Z : station.data.LE_Z),
+                        LE_Y: ((station.data.LE_Y == undefined) ? station.data.Y : station.data.LE_Y),
+
+                        TE_X: station.data.TE_X,
+                        TE_Z: ((station.data.TE_Z == undefined) ? station.data.Z : station.data.TE_Z),
+                        TE_Y: ((station.data.TE_Y == undefined) ? station.data.Y : station.data.TE_Y),
+
+                        Eta: station.data.Eta
+
+                    }
+                })
+            } else if (typeof obj[key] === "object" && obj[key] !== null) {
+                // Recurse into child objects if not a Planform station
+                searchAndExtract(obj[key], key)
             }
-          });
-  
-          // Sort the stations array based on the Y property
-          stations.sort((a, b) => a.data.Y - b.data.Y);
-  
-          // Assign sorted stations with sequential keys and insert into the result
-          stations.forEach((station, index) => {
-            const sequentialKey = `Station${index + 1}`; // Creating a sequential key
-
-            result[parentName][sequentialKey] = {
-              Y: station.data.Y,
-              Z: station.data.Z,                      
-
-              LE_X: station.data.LE_X,
-              LE_Z: station.data.LE_Z,
-              LE_Y: station.data.LE_Y,
-
-              TE_X: station.data.TE_X,
-              TE_Z: station.data.TE_Z,
-              TE_Y: station.data.TE_Y,
-
-            };
-          });
-        } else if (typeof obj[key] === "object" && obj[key] !== null) {
-          // Recurse into child objects if not a Planform station
-          searchAndExtract(obj[key], key);
-        }
-      });
+        })
     }
-  
-    searchAndExtract(object, null);
-    return result;
-  }
-  
+
+    searchAndExtract(object, null)
+    return result
+}
 
 
 
-// Example object
-const data = {
-    wing: {
-      Planform: {
-        CentreStation: {
-        Y: 10,
-        LE_X: 0,
-        LE_Z: 0,
-        TE_X: 20,
-        TE_Z: 5,
-      },
-      RootStation: {
-        Y: 20,
-        LE_X: 1,
-        LE_Z: 1,
-        TE_X: 21,
-        TE_Z: 51,
-      }      
-    },
-    },
-    tail: {
-      Planform: {
-        CentreStation: {
-            Y: 0,
-            LE_X: 0,
-            LE_Z: 0,
-            TE_X: 20,
-            TE_Z: 5,
-          },
-          RootStation: {
-            Y: 10,
-            LE_X: 1,
-            LE_Z: 2,
-            TE_X: 21,
-            TE_Z: 53,
-          }
-      },
-    },
-  };
+function create_FUS_geometry_from_NVUD_object_data(object) {
+    
+        FUS_nose_tip_x = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Nose"]["Tip_X"]["Value"])
+        FUS_nose_tip_z = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Nose"]["Tip_Z"]["Value"])
+        
+        FUS_start_of_cyl_Section_x = FUS_nose_tip_x + parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Nose"]["L"]["Value"])
+        FUS_end_of_cyl_Section_x = FUS_start_of_cyl_Section_x + parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Centre"]["L"]["Value"])
+        
+        FUS_end_x = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Tail"]["Tip_X"]["Value"])
+        FUS_end_z = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Tail"]["Tip_Z"]["Value"])
+        
+        FUS_base_area_height = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Tail"]["Tip_H"]["Value"])
+        FUS_base_area_width = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["//#4 Tail"]["Tip_W"]["Value"])
+            
+        FUS_max_width = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["W"]["Value"])
+        FUS_max_height = parseFloat(object["//#1 Aircraft"]["//#2 Geometry"]["//#3 Fuselage"]["H"]["Value"])
+    
+    
+        jsn_nodes_ac.model_data.SEGMENTs.push(  // OJO!!! con el comienzo en Z de la parte cilíndrica de FUS
+    
+            { ID: "FUS_NOSE",  DEF: [{START: [FUS_nose_tip_x, 0,  FUS_nose_tip_z ], END: [FUS_start_of_cyl_Section_x, 0,  FUS_nose_tip_z ] }], 
+            render_params: {arrow_color: "green", thickness : 1, start_diameter: 0, end_diameter: FUS_max_width , label_at_start_point: "FUS_nose", label_at_end_point: "FUS_cyl_fwd" }      },
+
+            { ID: "FUS_CYL",  DEF: [{START: [FUS_start_of_cyl_Section_x, 0,  FUS_nose_tip_z ], END: [FUS_end_of_cyl_Section_x, 0,  FUS_nose_tip_z ] }], 
+            render_params: {arrow_color: "blue", thickness : 1, start_diameter: FUS_max_width, end_diameter: FUS_max_width , label_at_start_point: "FUS_nose", label_at_end_point: "FUS_cyl_fwd" }      }, 
+
+            { ID: "FUS_AFT",  DEF: [{START: [FUS_end_of_cyl_Section_x, 0,  FUS_nose_tip_z ], END: [FUS_end_x, 0,  FUS_end_z ] }], 
+            render_params: {arrow_color: "green", thickness : 1, start_diameter: FUS_max_width, end_diameter: FUS_base_area_height , label_at_start_point: "FUS_nose", label_at_end_point: "FUS_cyl_fwd" }      }
+
+        )       
+}    
 
 
 
-  function createCoordsysValidationData(object) {
-    const jsn_nodes_ac = {
-      name: "Coordsys_validation_complex_case",
-      group: "basic_group",
-      model_data: {
-        NODEs: [],
-        BALLs: [],
-      }
-    };
-  
+
+function createCoordsysValidationData(object) {
+
     Object.keys(object).forEach(section => {
-      Object.keys(object[section]).forEach(station => {
-        const {LE_X0, LE_Z0, Y0, TE_X0, TE_Z0} = object[section][station];
-        const LE_ID = `${section}_${station}_LE`;
-        const TE_ID = `${section}_${station}_TE`;
+        Object.keys(object[section]).forEach(station => {
+            //const {LE_X0, LE_Z0, Y0, TE_X0, TE_Z0} = object[section][station]
+            const LE_ID = `${section}_${station}_LE`
+            const TE_ID = `${section}_${station}_TE`
+
+            //console.log(object[section][station])
+
+            LE_X = Number(object[section][station].LE_X.Value)
+            LE_Y = object[section][station].LE_Y == undefined ? Number(object[section][station].Y.Value) : Number(object[section][station].LE_Y.Value)
+            LE_Z = object[section][station].LE_Z == undefined ? Number(object[section][station].Z.Value) : Number(object[section][station].LE_Z.Value)
+
+            TE_X = Number(object[section][station].TE_X.Value)
+            TE_Y = object[section][station].TE_Y == undefined ? Number(object[section][station].Y.Value) : Number(object[section][station].TE_Y.Value)
+            TE_Z = object[section][station].TE_Z == undefined ? Number(object[section][station].Z.Value) : Number(object[section][station].TE_Z.Value)
 
 
-console.log(object[section][station])
+            // Adding NODEs
+            jsn_nodes_ac.model_data.NODEs.push(
+                { ID: LE_ID, DEF: [LE_X, LE_Y, LE_Z] },
+                { ID: TE_ID, DEF: [TE_X, TE_Y, TE_Z] }
+            )
 
-        LE_X = Number(object[section][station].LE_X.Value)
-        LE_Y = object[section][station].LE_Y == undefined ?  Number(object[section][station].Y.Value) :  Number(object[section][station].LE_Y.Value)
-        LE_Z = object[section][station].LE_Z == undefined ?  Number(object[section][station].Z.Value) :  Number(object[section][station].LE_Z.Value)
-
-        TE_X = Number(object[section][station].TE_X.Value)
-        TE_Y = object[section][station].TE_Y == undefined ?  Number(object[section][station].Y.Value) :  Number(object[section][station].TE_Y.Value)
-        TE_Z = object[section][station].TE_Z == undefined ?  Number(object[section][station].Z.Value) :  Number(object[section][station].TE_Z.Value)
-
-  
-        // Adding NODEs
-        jsn_nodes_ac.model_data.NODEs.push(
-          {ID: LE_ID, DEF: [LE_X, LE_Y, LE_Z]},
-          {ID: TE_ID, DEF: [TE_X, TE_Y, TE_Z]}
-        );
-  
-        // Adding BALLs
-        jsn_nodes_ac.model_data.BALLs.push(
-          { ID: `${LE_ID}_ball`, NODE_IDs: [LE_ID], R: .3, render_params: {color: "yellow", alpha: 1} },
-          { ID: `${TE_ID}_ball`, NODE_IDs: [TE_ID], R: .3, render_params: {color: "yellow", alpha: 1} }
-        );
-      });
-    });
-  
-    return jsn_nodes_ac;
-  }
+            // Adding BALLs
+            jsn_nodes_ac.model_data.BALLs.push(
+                { ID: `${LE_ID}_ball`, NODE_IDs: [LE_ID], R: .1, render_params: { color: "yellow", alpha: .5 } },
+                { ID: `${TE_ID}_ball`, NODE_IDs: [TE_ID], R: .1, render_params: { color: "green", alpha: .5 } }
+            )
 
 
+            if (station != Object.keys(object[section])[Object.keys(object[section]).length - 1]) {
+
+                next_station = incrementStationNumber(station)
+
+                LE_X1 = Number(object[section][next_station].LE_X.Value)
+                LE_Y1 = object[section][next_station].LE_Y == undefined ? Number(object[section][next_station].Y.Value) : Number(object[section][next_station].LE_Y.Value)
+                LE_Z1 = object[section][next_station].LE_Z == undefined ? Number(object[section][next_station].Z.Value) : Number(object[section][next_station].LE_Z.Value)
+
+                TE_X1 = Number(object[section][next_station].TE_X.Value)
+                TE_Y1 = object[section][next_station].TE_Y == undefined ? Number(object[section][next_station].Y.Value) : Number(object[section][next_station].TE_Y.Value)
+                TE_Z1 = object[section][next_station].TE_Z == undefined ? Number(object[section][next_station].Z.Value) : Number(object[section][next_station].TE_Z.Value)
 
 
+                jsn_nodes_ac.model_data.SHELLs.push(
+                    { ID: LE_ID, NODE_IDs: [[LE_X, LE_Y, LE_Z], [TE_X, TE_Y, TE_Z], [LE_X1, LE_Y1, LE_Z1], [TE_X1, TE_Y1, TE_Z1]], render_params: {color: "green" ,  alpha : .5} }
+                )
+            }
+
+        })
+    })
+
+    return jsn_nodes_ac
+
+
+
+    function incrementStationNumber(str) {
+        // Split the input string into parts
+        const parts = str.split("_")
+
+        // Increment the number part
+        const incrementedNumber = parseInt(parts[1], 10) + 1
+
+        // Reassemble and return the updated string
+        return `${parts[0]}_${incrementedNumber}`;
+    }
+}
 
 
 function create_geometry_object_model_from_NVUD(nvud_object) {
 
-    pp = extractAndOrderPlanformStationData(nvud_object)
-    
-    kk = createCoordsysValidationData(pp)
+    lifting_surfaces_planform_data = extractAndOrderPlanformStationData(nvud_object)
+  
+    create_FUS_geometry_from_NVUD_object_data(nvud_object)
+
+    var complete_model_data_object_from_file_NVUD = createCoordsysValidationData(lifting_surfaces_planform_data)  // This variable contains the processed input file into a JS object
 
 
+    Create_BALLs_from_Nodes(complete_model_data_object_from_file_NVUD)
 
- var complete_model_data_object_from_file_NVUD = kk  // This variable contains the processed input file into a JS object
+    create_patches_from_corners(complete_model_data_object_from_file_NVUD)
 
- 
- Create_BALLs_from_Nodes(complete_model_data_object_from_file_NVUD)
-
-
-
-    return pp
-    
-
-
-
-
-    }
-    
-    
+    add_segments_to_scene(jsn_nodes_ac)
 
 
 
 
+
+    //return pp
+
+
+}
+
+
+// End of Mods Lunes
 
 
 

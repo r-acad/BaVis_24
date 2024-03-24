@@ -86,10 +86,14 @@ major_gridLines.position.x = ground_x_shift
 
 
 
+// Move ground to a position consistent with GUI (OJO!!! check this and make it more elegant)
+ground.position.z = -3
+major_gridLines.position.z = -3
+minor_gridLines.position.z = -3
 
 
-    var axisLength = 5 // Length of each axis
-    var axisThickness = axisLength / 20; // Thickness of the axes
+    var axisLength = 1 // Length of each axis
+    var axisThickness = axisLength / 15; // Thickness of the axes
 
     // Red X Axis
     var xAxis = BABYLON.MeshBuilder.CreateCylinder("xAxis", { height: axisLength, diameter: axisThickness }, scene);

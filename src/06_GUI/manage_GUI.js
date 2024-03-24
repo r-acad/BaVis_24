@@ -1,27 +1,21 @@
 /// <reference path='../../lib/babylon.d.ts' />
 
-
-
 var setup_GUI = async function () {
 
-let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene);
-let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
+let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene)
+//let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
 
-//let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#27");
-
-
+let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#31")
 
 
-const Button_show_global_menu = advancedTexture.getControlByName('Button_show_global_menu');
-const StackPanel_Global_Menu = advancedTexture.getControlByName('StackPanel_Global_Menu');
+const Button_show_global_menu = advancedTexture.getControlByName('Button_show_global_menu')
+const StackPanel_Global_Menu = advancedTexture.getControlByName('StackPanel_Global_Menu')
 
-
-
-const Button_read_files = advancedTexture.getControlByName('Button_read_files');
+const Button_read_files = advancedTexture.getControlByName('Button_read_files')
 const read_files_box = advancedTexture.getControlByName('read_files_box')
 const Button_close_read_files_box = advancedTexture.getControlByName('Button_close_read_files_box')
 
-const Button_render_options = advancedTexture.getControlByName('Button_render_options');
+const Button_render_options = advancedTexture.getControlByName('Button_render_options')
 const render_options_box = advancedTexture.getControlByName('render_options_box')
 
 const Slider_ground_z = advancedTexture.getControlByName('Slider_ground_z')
@@ -38,12 +32,19 @@ const Button_close_render_options_box = advancedTexture.getControlByName('Button
 
 const Button_readnastran = advancedTexture.getControlByName('Button_readnastran')
 
+const Button_read_GEO_file = advancedTexture.getControlByName('Button_read_GEO_file')
+
+Button_read_GEO_file.onPointerDownObservable.add(function() {
+    read_files_box.isVisible = !read_files_box.isVisible 
+    showDropArea()
+})
+
+
 
 Button_change_full_screen.onPointerDownObservable.add(function() {
     //render_options_box.isVisible = !render_options_box.isVisible 
     toggleFullscreen()
 })
-
 
 
 Button_close_read_files_box.onPointerUpObservable.add(function() {
@@ -53,7 +54,6 @@ Button_close_read_files_box.onPointerUpObservable.add(function() {
 Button_close_render_options_box.onPointerUpObservable.add(function() {
     render_options_box.isVisible = !render_options_box.isVisible 
 })
-
 
 
 Button_read_files.onPointerUpObservable.add(function() {
@@ -69,7 +69,6 @@ Button_show_inspector.onPointerUpObservable.add(function() {
      scene.debugLayer.show({embedMode: true})
 }
 )
-
 
 
 

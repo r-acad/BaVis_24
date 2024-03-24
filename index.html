@@ -8,6 +8,8 @@
 </head>
 <body>
 
+    <div id="dropArea">Drag and drop your file here</div>
+
 <div class="input-group">
 
 
@@ -107,6 +109,10 @@
     <script src="./src/02_Create_Geometries/02_04_Create_Arrows_for_Vectors.js"></script>
     <script src="./src/02_Create_Geometries/02_05_Create_Labels.js"></script>
     <script src="./src/02_Create_Geometries/02_06_Create_Coordinate_Systems.js"></script>
+    
+    <script src="./src/02_Create_Geometries/02_07_create_patches_from_corners.js"></script>
+
+
     <script src="./src/02_Create_Geometries/02_000_points_lines_to_be_deprecated.js"></script>   
         
     <script src="./src/03_Render_Loop_and_Events/03_Render_Loop.js"></script>
@@ -119,6 +125,7 @@
     <script src="./src/99_Data_Structures_and_Parsers/99_001_new_nastran_reader.js" ></script>   
     <script src="./src/99_Data_Structures_and_Parsers/99_002_Load_3D_File.js" ></script>   
     <script src="./src/99_Data_Structures_and_Parsers/99_003_convert_MyJSON_to_proper_JSON.js" ></script>   
+    <script src="./src/99_Data_Structures_and_Parsers/99_004_surface_mesh_parser.js" ></script>   
 
     <script src="./src/04_REST_Code/GET_REST_points_to_plot.js"></script>
     <script src="./src/04_REST_Code/REST_CLIENT_POINTS_string_GOOD.js"></script>
@@ -128,22 +135,12 @@
     <script>
 
 
-
-
-
-
     main()   // Do everything
 
         // TO-DO
 
         // Revise the need for nodes and vectors as independent entities, where vectors could do all the functions   2024 01 11
         // check errors in coordinate transformations: 1- ill-defined coordys (parallel vectors), 2- non-existent coordys
-
-    
-
-
-
-
 
 
 
