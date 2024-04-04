@@ -19,7 +19,7 @@ function create_ground(size, light, shadowGenerator) {
 
     ground.up = new BABYLON.Vector3(0, 0, 1)
     ground.position.z = ground_z
-
+    ground.isPickable = false
 
 
     
@@ -80,11 +80,13 @@ function create_ground(size, light, shadowGenerator) {
     gridMaterial.emissiveColor = major_lineColor;
     major_gridLines.color = major_lineColor;
     major_gridLines.isPickable = true
+ 
 
 minor_gridLines.position.x = ground_x_shift
 major_gridLines.position.x = ground_x_shift
 
-
+minor_gridLines.isPickable = false
+major_gridLines.isPickable = false
 
 // Move ground to a position consistent with GUI (OJO!!! check this and make it more elegant)
 ground.position.z = -3
