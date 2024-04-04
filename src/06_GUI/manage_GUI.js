@@ -3,9 +3,151 @@
 var setup_GUI = async function () {
 
 let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene)
+
+
+
+
 //let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
 
 let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#32")
+
+
+
+
+
+var measurementMode = false;
+        var selectedPoints = [];
+        var linesAndMarkers = [];
+        var spheres = [];
+        var toggleMeasureButton = document.getElementById('toggleMeasure');
+
+
+
+
+        function updateCursorAndButtonStyle() {
+            if (measurementMode) {
+                canvas.style.cursor = 'crosshair';
+                toggleMeasureButton.style.backgroundColor = 'green';
+            } else {
+                canvas.style.cursor = 'default';
+                toggleMeasureButton.style.backgroundColor = 'blue';
+            }
+        }
+
+        document.getElementById('createSpheres').addEventListener('click', function() {
+            // Clean only spheres and keep lines/markers intact
+            spheres.forEach(sphere => sphere.dispose());
+            spheres = [];
+
+            var count = document.getElementById('sphereCount').value;
+            for (let i = 0; i < count; i++) {
+                let sphere = BABYLON.MeshBuilder.CreateSphere("sphere" + i, {diameter: 0.5}, scene);
+                sphere.position = new BABYLON.Vector3(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5, Math.random() * 5 - 2.5);
+                spheres.push(sphere);
+            }
+        });
+
+        document.getElementById('toggleMeasure').addEventListener('click', function() {
+            measurementMode = !measurementMode;
+            updateCursorAndButtonStyle();
+        });
+
+        document.getElementById('deleteLast').addEventListener('click', function() {
+            if (linesAndMarkers.length > 0) {
+                var lastItem = linesAndMarkers.pop();
+                lastItem.line?.dispose();
+                lastItem.marker?.dispose();
+                lastItem.midpointMesh?.dispose();
+                advancedTexture.removeControl(lastItem.label);
+            }
+        });
+
+        document.getElementById('deleteAll').addEventListener('click', function() {
+            while(linesAndMarkers.length) {
+                var item = linesAndMarkers.pop();
+                item.line?.dispose();
+                item.marker?.dispose();
+                item.midpointMesh?.dispose();
+                advancedTexture.removeControl(item.label);
+            }
+            selectedPoints = [];
+        });
+
+        window.addEventListener("click", function(evt) {
+    if (!measurementMode || !scene) return;
+
+    var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+    if (pickResult.hit && pickResult.pickedMesh !== canvas) {
+        var pickedPoint = pickResult.pickedPoint;
+        selectedPoints.push(pickedPoint);
+
+        if (selectedPoints.length <= 2) {
+            // Format the coordinates into a string with 2 decimal places
+            var coordsText = "x: " + pickedPoint.x.toFixed(2) + ", y: " + pickedPoint.y.toFixed(2) + ", z: " + pickedPoint.z.toFixed(2);
+            var label = new BABYLON.GUI.Rectangle();
+            label.width = "140px"; // Adjust width to fit the coordinates text
+            label.height = "30px";
+            label.cornerRadius = 10;
+            label.color = "White";
+            label.thickness = 1;
+            label.background = "rgba(255, 0, 0, 0.5)"; // Set alpha to 0.5 for the label background
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.text = coordsText; // Use the coordinates text here
+            text1.color = "white";
+            text1.fontSize = "50%"; // Set the size of the text to half of its current size
+            label.addControl(text1);
+            advancedTexture.addControl(label);
+            var invisibleMarker = BABYLON.MeshBuilder.CreateSphere("markerPoint" + selectedPoints.length, {diameter: 0.01, visibility: 0}, scene);
+            invisibleMarker.position = pickedPoint;
+            label.linkWithMesh(invisibleMarker);
+
+            // Store label with invisible markers for cleanup
+            linesAndMarkers.push({label, marker: invisibleMarker});
+        }
+
+        if (selectedPoints.length === 2) {
+            var distance = BABYLON.Vector3.Distance(selectedPoints[0], selectedPoints[1]).toFixed(2);
+            var line = BABYLON.MeshBuilder.CreateLines("line", {points: selectedPoints}, scene);
+            var midpoint = BABYLON.Vector3.Center(selectedPoints[0], selectedPoints[1]);
+            var midpointMesh = BABYLON.MeshBuilder.CreateSphere("midpoint", {diameter: 0.01, visibility: 0}, scene);
+            midpointMesh.position = midpoint;
+
+            var label = new BABYLON.GUI.Rectangle();
+            label.width = "120px"; // Adjust width to fit the distance text
+            label.height = "30px";
+            label.cornerRadius = 20;
+            label.color = "White";
+            label.thickness = 2;
+            label.background = "rgba(0, 128, 0, 0.5)"; // Set alpha to 0.5 for the label background
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.text = distance + ' units';
+            text1.color = "white";
+            text1.fontSize = "50%"; // Set the size of the text to half of its current size
+            label.addControl(text1);
+            advancedTexture.addControl(label);
+            label.linkWithMesh(midpointMesh);
+
+            linesAndMarkers.push({line, label, midpointMesh});
+
+            selectedPoints = [];
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const Button_show_global_menu = advancedTexture.getControlByName('Button_show_global_menu')
