@@ -18,7 +18,14 @@ function build_nastran_model(text_bdf) {
         "geometric_data_object": {
             "NODEs": nastran_model.GRIDs,
             "SHELLs": nastran_model.CSHELLs,
-            "Bounding_Box": nastran_model.Bounding_Box
+            "Bounding_Box": nastran_model.Bounding_Box, 
+            "CAEROs": nastran_model.CAEROs,
+            "SET1s": nastran_model.SET1s,
+            "RBE3s": nastran_model.RBE3s,
+            "TETRAs": nastran_model.TETRAs,
+            "PLOTELs": nastran_model.PLOTELs,
+            "CORDs": nastran_model.CORDs
+
         }
     }
 
@@ -50,6 +57,7 @@ function read_Nastran_cards_and_build_model_object(bdf_lines) {
             let lineadd = 1
             while ((i + lineadd < filt_lines.length) && is_nastran_continuation(filt_lines[i + lineadd])) {
                 line_array.push(get_nastran_fields_from_line(filt_lines[i + lineadd]))
+                line_array[1] = card  // Change card type to the basic name without "*"
                 lineadd++
             }  // end while
             i += lineadd - 1  // restore i to next line to be processed (if there was no continuation lineadd-1 = 0 -> no jump)
@@ -67,7 +75,8 @@ function read_Nastran_cards_and_build_model_object(bdf_lines) {
     nastran_model.CAEROs = append_supported_card_arrays("CAERO", ["CAERO1"]) // append maps
     nastran_model.SET1s = append_supported_card_arrays("SET1", ["SET1"]) // append maps
     nastran_model.RBE3s = append_supported_card_arrays("RBE3", ["RBE3"]) // append maps
-    nastran_model.TETRAs = append_supported_card_arrays("CTETRA", ["CTETRA"]) // append maps
+    nastran_model.TETRAs = append_supported_card_arrays("CTETRA", ["CTETRA"]) // append maps 
+    nastran_model.PLOTELs = append_supported_card_arrays("PLOTEL", ["PLOTEL"]) // append maps 
 
 
     function append_supported_card_arrays(elm_class, supported_cards_of_type) { // BUILD MODEL OBJECT FROM MAPS OF TYPES OF CARDS (BY DIMENSION)
@@ -89,6 +98,21 @@ function read_Nastran_cards_and_build_model_object(bdf_lines) {
 //********************************************************************************************************** */
 //                                NASTRAN CARD INTERPRETATION OBJECT
 let CARDS2DATA = {
+
+
+    PLOTEL: function (processed_cards_array) {
+        let cards_object = {}
+        processed_cards_array.forEach((arr_line) => {
+            let CARD = "PLOTEL"
+            let EID = parse_nastran_number(arr_line[2])
+            let NODE_IDs = []
+            NODE_IDs[1] = parse_nastran_number(arr_line[3])
+            NODE_IDs[2] = parse_nastran_number(arr_line[4])
+            cards_object[EID] = { CARD, EID, NODE_IDs }
+        }) // next foreachnumber
+        return cards_object
+    }, // end method PLOTEL
+
 
     CTETRA: function (processed_cards_array) {
         let cards_object = {}
