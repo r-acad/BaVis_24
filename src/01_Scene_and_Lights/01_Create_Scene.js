@@ -6,7 +6,8 @@ var createScene = async function () {
 
     // Create HTML Canvas object and start-up rendering engine attached to Canvas
     canvas = document.getElementById("renderCanvas");
-    engine = new BABYLON.Engine(canvas, true);
+    //engine = new BABYLON.Engine(canvas, true);
+    const engine = new BABYLON.Engine(canvas, true, { stencil: true });
 
 
 
@@ -14,6 +15,8 @@ var createScene = async function () {
 
     // Engine and scene creation
     scene = new BABYLON.Scene(engine);
+
+
 
     // Set the background color to deep blue sky
     scene.clearColor = new BABYLON.Color4(153/255, 204/255, 1, 1); // RGBA values
@@ -102,7 +105,8 @@ var createScene = async function () {
     shadowGenerator.useBlurExponentialShadowMap = true;
     shadowGenerator.blurKernel = 32;
 
-
+    // Highlight layer
+    highlightLayer = new BABYLON.HighlightLayer("hl1", scene);
 
     setup_GUI()
 

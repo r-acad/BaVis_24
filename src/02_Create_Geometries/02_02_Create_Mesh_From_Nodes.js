@@ -158,7 +158,7 @@ function create_single_SHELL_from_3_or_4_points(nodes, label = null, prefix = nu
 
   // Compute centroid
   var centroid = [0, 0, 0];
-  nodes.forEach(node => {
+  nodes.slice(1,5).forEach(node => {  // the slice is to remove the first empty element which distorts the centroid location
       positions.push(node[0] * scale_mesh_by, node[1] * scale_mesh_by, node[2] * scale_mesh_by);
       centroid[0] += node[0];
       centroid[1] += node[1];
@@ -171,33 +171,52 @@ function create_single_SHELL_from_3_or_4_points(nodes, label = null, prefix = nu
   vertexData.indices = indices;
   vertexData.applyToMesh(customMesh, true);
 
+
+
+
+  random_color = new BABYLON.Color3(Math.random()*.5, Math.random()*.5, Math.random()*.5);
   // Create material and apply random color
   var material = new BABYLON.StandardMaterial("material", scene);
-  material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+  material.diffuseColor = random_color
   material.backFaceCulling = false; // Visible from both sides
   customMesh.material = material;
 
-  // Create a GUI label in 3D space if a label is requested
-  if (label) {
+// Create a GUI label in 3D space if a label is requested
+if (label) {
 
-    if (prefix) {label = prefix + " " + label}
-      // Create a plane to host the GUI label
-      var labelPlane = BABYLON.MeshBuilder.CreatePlane("labelPlane", { size: 10 }, scene);
-      labelPlane.position = new BABYLON.Vector3(centroid[0], centroid[1], centroid[2]);
-      labelPlane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL; // Always face the camera
-      labelPlane.isPickable = false; // Make the plane non-interactive
-      labelPlane.renderingGroupId = 1; // Render this plane on top of other meshes
+  if (prefix) {label = prefix + " " + label}
 
-      // Attach a dynamic texture to the plane
-      var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(labelPlane);
 
-      // Create the text block
-      var textBlock = new BABYLON.GUI.TextBlock();
-      textBlock.text = label;
-      textBlock.color = "white";
-      textBlock.fontSize = 20;  // Can adjust based on visibility needs
-      advancedTexture.addControl(textBlock);
+  add_label_to_scene(label_location = (new BABYLON.Vector3(centroid[0], centroid[1], centroid[2])),
+  text = "CAERO1" + key, 
+  planeHeight = .2,
+  label_background_color = random_color, //(new BABYLON.Color3.White()), 
+  label_text_color = "white",  // It does not work yet
+  my_font_size = 50   // controls the resolution of the text font
+  )
+
+/*
+    // Create a plane to host the GUI label
+    var labelPlane = BABYLON.MeshBuilder.CreatePlane("labelPlane", { size: 10 }, scene);
+    labelPlane.position = new BABYLON.Vector3(centroid[0], centroid[1], centroid[2]);
+    labelPlane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL; // Always face the camera
+    labelPlane.isPickable = false; // Make the plane non-interactive
+    labelPlane.renderingGroupId = 1; // Render this plane on top of other meshes
+
+    // Attach a dynamic texture to the plane
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(labelPlane);
+
+    // Create the text block
+    var textBlock = new BABYLON.GUI.TextBlock();
+    textBlock.text = label;
+    textBlock.color = "white";
+    textBlock.fontSize = 20;  // Can adjust based on visibility needs
+    advancedTexture.addControl(textBlock);
+*/
+
+
   }
+
 }
 
 

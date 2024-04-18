@@ -81,7 +81,15 @@ canvas.addEventListener("pointerdown", function (evt) {
     currentMesh = pickResult.pickedMesh
     currentMesh.renderOverlay = true
     currentMesh.overlayColor = new BABYLON.Color3(1, 0, 1)
+  } else {
+
+    currentMesh.renderOverlay = false // Remove previous overlay
   }
+
+
+
+
+
 })
 
 function onDragStart() {

@@ -3,9 +3,9 @@
 var setup_GUI = async function () {
 
 let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene)
-//let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
+let loadedGUI = await advancedTexture.parseFromURLAsync("./src/06_GUI/guiTexture.json");
 
-let loadedGUI = await advancedTexture.parseFromSnippetAsync("1G2LYV#32")
+//let loadedGUI = await advancedTexture.parseFromSnippetAsync("A2KPKQ#2")
 
 
 
@@ -89,11 +89,37 @@ canvas.addEventListener("pointerdown", function (evt) {
   if (pickResult.hit) {
     if (currentMesh) {
       currentMesh.renderOverlay = false // Remove previous overlay
+      //currentMesh.renderOutline = false
+
+      if (highlightLayer.hasMesh(currentMesh)) {
+        highlightLayer.removeMesh(currentMesh);
+    }
+
+      
+
+
     }
     currentMesh = pickResult.pickedMesh
     currentMesh.renderOverlay = true
-    currentMesh.overlayColor = new BABYLON.Color3(1, 0, 1)
+    currentMesh.overlayColor = new BABYLON.Color3(0, 1, 1)
+    //currentMesh.renderOutline = true
+    //currentMesh.outlineColor = new BABYLON.Color3(1, 0, 1)
+
+    highlightLayer.addMesh(currentMesh, BABYLON.Color3.Green());
+
+ 
+} else {
+  if (currentMesh) {
+  currentMesh.renderOverlay = false // Remove previous overlay
+
+  if (highlightLayer.hasMesh(currentMesh)) {
+    highlightLayer.removeMesh(currentMesh);
+}
+
   }
+}
+
+
 })
 
 function onDragStart() {
@@ -423,6 +449,7 @@ var measurementMode = false;
             var midpoint = BABYLON.Vector3.Center(selectedPoints[0], selectedPoints[1]);
             var midpointMesh = BABYLON.MeshBuilder.CreateSphere("midpoint", {diameter: 0.01, visibility: 0}, scene);
             midpointMesh.position = midpoint;
+            line.renderingGroupId = 1; // Render this line on top of other meshes
 
             var label = new BABYLON.GUI.Rectangle();
             label.width = "120px"; // Adjust width to fit the distance text
